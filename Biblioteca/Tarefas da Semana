@@ -1,0 +1,13 @@
+- Aprender a usar colocar uma chave ssh vinculada ao gitHub no windows
+
+- Clonar o codigo do git hub usando ssh
+
+- Editar o codigo corrigindo os erros
+
+- Subir pro repositorio usando os seguintes comandos no terminal
+
+Git add .
+
+Git commit -m "comentario q quiser"
+
+git push
