@@ -1,0 +1,32 @@
+Aqui está um exercício legal e prático para seu primo praticar com structs:
+
+
+---
+
+Exercício: Cadastro de Livros
+
+Crie um programa em C que utilize uma struct chamada Livro para armazenar informações sobre livros em uma biblioteca. A struct deve conter os seguintes campos:
+
+1. Título (máximo de 50 caracteres).
+
+
+2. Autor (máximo de 50 caracteres).
+
+
+3. Ano de publicação (inteiro).
+
+
+4. Código ISBN (string com 13 caracteres).
+
+
+
+
+O programa deve:
+
+1. Permitir ao usuário cadastrar até 5 livros (preenchendo os campos).
+
+
+2. Exibir os dados de todos os livros cadastrados.
+
+
+3. Ter uma opção para buscar um livro pelo título e exibir suas informações.
