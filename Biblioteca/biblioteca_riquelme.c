@@ -14,6 +14,39 @@ struct biblioteca
 
 };
 
+int menu_principal()
+{
+    int opcao;
+    printf("------------------------------\n");
+    printf("(0) Sair\n");
+    printf("(1) Cadastrar\n");
+    printf("(2) Listar livros\n");
+    printf("(3) Buscar Livro\n");
+    printf("(4) Excluir livro\n");
+
+    printf("Opcao: ");
+    scanf("%d", &opcao);
+    printf("------------------------------\n");
+    return opcao;
+}
+
+void cadastrar(struct biblioteca livro[5], int posicao){
+    fflush(stdin);
+    printf("------ Cadastrar ------\n");
+    printf("ID: %d\n", posicao + 1);
+    printf("Titulo: ");
+    fflush(stdin);
+    scanf("%[^\n]", livro[posicao].titulo);
+    fflush(stdin);
+    printf("Autor: ");
+    scanf("%[^\n]", livro[posicao].autor);
+    printf("Ano de publicacao: ");
+    scanf("%d", &livro[posicao].ano_pub);
+    printf("ISBN: ");
+    scanf(" %s", livro[posicao].isbn);
+    livro[posicao].excluido = 0;
+}
+
 // Função para apertar enter para continuar programa.
 void enter_continuar()
 {
@@ -41,7 +74,7 @@ void mostrar(struct biblioteca livro[5], int id, int qtd)
     }
     else{
         printf("-------------------------\n");
-        printf("id: %d\n", id+1);
+        printf("id: ?\n");
         printf("Livro nao encontrado ou excluido.\n");
         printf("_________________________\n");
     }
@@ -94,26 +127,17 @@ int main()
     struct biblioteca livro[5];
 
     int opcao, qtd, i, busca_id, opc_busca, opc_excluir, opc_excluir_id, id, travar;
-    opcao = 10;
-    opc_busca = 10;
-    opc_excluir = 10;
-    opc_excluir_id = 10;
+    opc_busca = 0;
+    opc_excluir = 0;
+    opc_excluir_id = 0;
     qtd = 0;
     id = 0;
     travar = 0;
-
-    while (opcao != 0)
-    {
-        printf("------------------------------\n");
-        printf("(0) Sair\n");
-        printf("(1) Cadastrar\n");
-        printf("(2) Listar livros\n");
-        printf("(3) Buscar Livro\n");
-        printf("(4) Excluir livro\n");
-
-        printf("Opcao: ");
-        scanf("%d", &opcao);
-        printf("------------------------------\n");
+    
+    //Enquanto a opcao for diferente de 0(sair)
+    do{
+        //Mostrando o menu principal e variavel opcao recebendo o valor que o usuario digitou no menu
+        opcao = menu_principal();
 
         switch (opcao)
         {
@@ -122,57 +146,35 @@ int main()
             // Se o numero maximo de livro não foi atingido.
             if (qtd < 5)
             {
-                printf("------ Cadastrar ------\n");
-                printf("ID: %d\n", qtd + 1);
-                printf("Titulo: ");
-                fflush(stdin);
-                scanf("%[^\n]", livro[qtd].titulo);
-                fflush(stdin);
-                printf("Autor: ");
-                scanf("%[^\n]", livro[qtd].autor);
-                printf("Ano de publicacao: ");
-                scanf("%d", &livro[qtd].ano_pub);
-                printf("ISBN: ");
-                scanf(" %s", livro[qtd].isbn);
-                livro[qtd].excluido = 0;
-
+                cadastrar(livro, qtd); //Função que cadastra o livro
                 qtd += 1;
             }
             else
             {
+                //Percorrendo para ver se possuimos algum livro excluido
                 for(i = 0; i < qtd; i++){
                     if(livro[i].excluido == 1 && travar != 1){
+                        //Se existe falamos qual o id e paramos de percorrer os outros livros
                         id = i;
                         travar = 1;
                     }
                 }
-
-                if(travar == 1){
-                    printf("------ Cadastrar ------\n");
-                    printf("ID: %d\n", id + 1);
-                    printf("Titulo: ");
-                    fflush(stdin);
-                    scanf("%[^\n]", livro[id].titulo);
-                    fflush(stdin);
-                    printf("Autor: ");
-                    scanf("%[^\n]", livro[id].autor);
-                    printf("Ano de publicacao: ");
-                    scanf("%d", &livro[id].ano_pub);
-                    printf("ISBN: ");
-                    scanf(" %s", livro[id].isbn);
-                    livro[id].excluido = 0;
-                }
-                else
+                
+                //se possuimos algum livro excluido
+                if(travar == 1)
+                    cadastrar(livro, id);
+                else{
                     printf("Voce atingiu o numero maximo de livros.\n");
-            travar = 0; //Voltando ao valor inicial
+                    travar = 0; //Voltando ao valor inicial, travar = falso
+                }
             }
 
-            break;
+        break;
         case 2: // Listar
             // Verificando se já possui algum livro cadastrado
             if (qtd > 0)
             {
-                // Loop para mostrar todos os livros, do id 0 até o último.
+                // Loop para mostrar todos os livros, da posicao 0 até o último.
                 for (i = 0; i < qtd; i++)
                     mostrar(livro, i, qtd);
             }
@@ -180,12 +182,11 @@ int main()
                 printf("Nenhum livro cadastrado.\n");
 
             enter_continuar();
-            break;
+        break;
 
         case 3: // Buscar
 
-            while (opc_busca != 0)
-            {
+            do{
                 printf("-------------------------\n");
                 printf("//Pagina buscar\n");
                 printf("(0) Voltar\n");
@@ -206,7 +207,6 @@ int main()
                     mostrar(livro, busca_id - 1, qtd); //-1 pois a posição no array começa com 0
                     enter_continuar();
                 break;
-
                     char titulo_busca[50];
                 case 2:
                     // Lendo o titulo
@@ -214,19 +214,17 @@ int main()
                     fflush(stdin);
                     scanf("%[^\n]", titulo_busca);
 
-                    // Chamando a função buscar titulo, que printa o livro pesquisado.
+                    // Chamando a funcao que printa o livro pesquisado.
                     mostrar(livro, buscar_titulo(titulo_busca, livro, qtd), qtd);
                     enter_continuar();
                 break;
                 }
-            }
-            opc_busca = 10;
+            }while (opc_busca != 0);
             break;
 
         case 4:
 
-            while (opc_excluir != 0)
-            {
+            do{
                 printf("//Pagina excluir\n");
                 printf("(0) Voltar\n");
                 printf("(1) Apagar por id\n");
@@ -244,27 +242,27 @@ int main()
 
                     mostrar(livro, busca_id - 1, qtd); //-1 pois a posição no array começa com 0
                     if(busca_id <= qtd && busca_id > 0 && livro[busca_id - 1].excluido != 1){
-                    while (opc_excluir_id != 0 && opc_excluir_id != 1)
-                    {
-                        printf("--------------------------------\n");
-                        printf("Voce deseja apagar o livro %s?\n", livro[busca_id - 1].titulo);
-                        printf("(0) nao\n");
-                        printf("(1) apagar\n");
-                        printf("Opcao: ");
 
-                        scanf("%d", &opc_excluir_id);
-                        printf("--------------------------------\n");
+                        do{
+                            printf("--------------------------------\n");
+                            printf("Voce deseja apagar o livro %s?\n", livro[busca_id - 1].titulo);
+                            printf("(0) nao\n");
+                            printf("(1) apagar\n");
+                            printf("Opcao: ");
 
-                        switch (opc_excluir_id)
-                        {
-                        case 1:
-                            livro[busca_id - 1].excluido = 1;
-                            printf("EXCLUIDO!\n");
-                            enter_continuar();
-                            break;
-                        }
-                    }
-                    opc_excluir_id = 10;
+                            scanf("%d", &opc_excluir_id);
+                            printf("--------------------------------\n");
+
+                            switch (opc_excluir_id)
+                            {
+                            case 1:
+                                livro[busca_id - 1].excluido = 1;
+                                printf("EXCLUIDO!\n");
+                                enter_continuar();
+                                break;
+                            }
+                        }while(opc_excluir_id != 0 && opc_excluir_id != 1);
+
                     }
 
                 break;
@@ -279,8 +277,8 @@ int main()
                     busca_id = buscar_titulo(titulo_busca, livro, qtd);
                     mostrar(livro, busca_id, qtd);
                     if(busca_id <= qtd && busca_id >= 0 && livro[busca_id].excluido != 1){
-                    while (opc_excluir_id != 0 && opc_excluir_id != 1)
-                    {
+                    
+                    do{
                         printf("--------------------------------\n");
                         printf("Voce deseja apagar o livro %s?\n", livro[busca_id].titulo);
                         printf("(0) nao\n");
@@ -298,20 +296,16 @@ int main()
                             enter_continuar();
                             break;
                         }
-                    }
-                    opc_excluir_id = 10;
+                    }while(opc_excluir_id != 0 && opc_excluir_id != 1);
                     }
                 break;
 
-                default:
-                    break;
                 }
-            }
+            }while (opc_excluir != 0);
 
-            opc_excluir = 10; // Declarei de novo, pois quando voltava pro menu principal e clicava no 3, o opc_busca já valia 0, aí fechava direto.
             break;
         }
-    }
+    }while (opcao != 0);
 
     // FIM
     return 0;
